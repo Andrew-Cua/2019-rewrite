@@ -103,8 +103,8 @@ public class Drivetrain extends Subsystem {
 
     double sensFactor = 0.75D;
 
-    double yValPrime = Math.pow((sensFactor*y), 3) + ((1-sensFactor)*y);
-    double xValPrime = Math.pow((sensFactor*x), 3) + ((1-sensFactor)*x);
+    double yValPrime = Math.pow((sensFactor*y), 5) + ((1-sensFactor)*y);
+    double xValPrime = Math.pow((sensFactor*x), 5) + ((1-sensFactor)*x);
     double leftPower  =  yValPrime - xValPrime;
     double rightPower =  yValPrime + xValPrime;
 

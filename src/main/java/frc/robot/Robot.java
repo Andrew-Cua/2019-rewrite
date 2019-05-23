@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_limelight.updateVision();
-    m_drivetrain.updateSmartDashboard();
+    //m_drivetrain.updateSmartDashboard();
     m_climber.updateSmartDashboard();
     m_wrist.updateSmartDashboard();
     m_arm.updateSmartDashboard();

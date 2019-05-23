@@ -22,20 +22,20 @@ public class MoveDistanceCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.m_drivetrain.resetEncoder();
+    //Robot.m_drivetrain.resetEncoder();
     
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivetrain.moveDistance(m_inches);
+    //Robot.m_drivetrain.moveDistance(m_inches);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.m_drivetrain.onTarget(m_inches);
+    return true;
   }
 
   // Called once after isFinished returns true

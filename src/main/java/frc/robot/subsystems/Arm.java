@@ -60,7 +60,7 @@ public class Arm extends Subsystem {
     cargoShipState = new CargoShipState(this);
     neutralState   = new NeutralState(this);
     ballGetterState = new BallGetterState(this);
-    setState(ArmSetpoints.kBallGetter);
+    setState(ArmSetpoints.kNeutral);
 
     //initialize arm motors
     m_master = new TalonSRX(RobotMap.armMaster);

@@ -13,6 +13,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.*;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -26,69 +29,34 @@ import frc.robot.commands.Drivetrain.DefaultDriveCommand;
 public class Drivetrain extends Subsystem {
   public static Drivetrain m_drivetrain = new Drivetrain();
 
-  private CANSparkMax m_leftMaster;
-  private CANSparkMax m_leftSlaveA;
-  private CANSparkMax m_leftSlaveB;
 
-  private CANSparkMax m_rightMaster;
-  private CANSparkMax m_rightSlaveA;
-  private CANSparkMax m_rightSlaveB;
+  private VictorSPX m_leftMaster;
+  private VictorSPX m_leftSlave;
 
-  private CANPIDController m_leftPID;
-  private CANPIDController m_rightPID;
 
-  private CANEncoder m_leftEncoder;
-  private CANEncoder m_rightEncoder;
+  private VictorSPX m_rightMaster;
+  private VictorSPX m_rightSlave;
+
   private Drivetrain()
   {
     //initialize left motors
-    m_leftMaster = new CANSparkMax(RobotMap.leftMaster, MotorType.kBrushless);
-    m_leftSlaveA = new CANSparkMax(RobotMap.leftSlaveA, MotorType.kBrushless);
-    m_leftSlaveB = new CANSparkMax(RobotMap.leftSlaveB, MotorType.kBrushless);
+    m_leftMaster = new VictorSPX(RobotMap.leftMaster);
+    m_leftSlave  = new VictorSPX(RobotMap.leftSlaveA);
 
-    //initialize right motors
-    m_rightMaster = new CANSparkMax(RobotMap.rightMaster, MotorType.kBrushless);
-    m_rightSlaveA = new CANSparkMax(RobotMap.rightSlaveA, MotorType.kBrushless);
-    m_rightSlaveB = new CANSparkMax(RobotMap.rightSlaveB, MotorType.kBrushless);
 
-    //initialize left PIDController and encoder
-    m_leftPID = m_leftMaster.getPIDController();
-    m_leftEncoder = m_leftMaster.getEncoder();
+    m_rightMaster = new VictorSPX(RobotMap.rightMaster);
+    m_rightSlave  = new VictorSPX(RobotMap.rightSlaveA);
 
-    //initialize right PIDController and encoder
-    m_rightPID = m_rightMaster.getPIDController();
-    m_rightEncoder = m_rightMaster.getEncoder();
 
     //invert rightside motors so that it can drive straight
-    m_rightMaster.setInverted(true);
-    m_rightSlaveA.setInverted(true);
-    m_rightSlaveB.setInverted(true);
+    m_rightMaster.setInverted(InvertType.InvertMotorOutput);
+    m_rightSlave.setInverted(InvertType.InvertMotorOutput);
+    m_leftSlave.follow(m_leftMaster);
 
     //set slaves to follow masters
-    m_leftSlaveA.follow(m_leftMaster);
-    m_leftSlaveB.follow(m_leftMaster);
+    m_rightSlave.follow(m_rightMaster);
 
-    //set slaves to follow masters
-    m_rightSlaveA.follow(m_rightMaster);
-    m_rightSlaveB.follow(m_rightMaster);
-
-    //set left PID
-    m_leftPID.setP(Constants.kP);
-    m_leftPID.setI(Constants.kI);
-    m_leftPID.setD(Constants.kD);
-    m_leftPID.setSmartMotionMaxVelocity(Constants.kMAX_VEL, 0);
-    m_leftPID.setSmartMotionMaxAccel(Constants.kMAX_ACCEL, 0);
-    m_leftPID.setOutputRange(Constants.kOUTPUT_MIN, Constants.kOUTPUT_MAX);
-
-    //set right PID
-    m_rightPID.setP(Constants.kP);
-    m_rightPID.setI(Constants.kI);
-    m_rightPID.setD(Constants.kD);
-    m_rightPID.setSmartMotionMaxVelocity(Constants.kMAX_VEL, 0);
-    m_rightPID.setSmartMotionMaxAccel(Constants.kMAX_ACCEL, 0);
-    m_rightPID.setOutputRange(Constants.kOUTPUT_MIN, Constants.kOUTPUT_MAX);
-
-  }
+      }
 
   /**
    * common function to drive the robot
@@ -128,40 +96,9 @@ public class Drivetrain extends Subsystem {
   }
   //haha epic comment
 
-  /**
-   * resets the encoder position by setting the current position to 0
-   */
-  public void resetEncoder()
-  {
-    m_leftEncoder.setPosition(0);
-    m_rightEncoder.setPosition(0);
-  }
 
 
-  /**
-   * function that determines whether or not the robot
-   * has moved the distance set by the moveDistance function
-   * @param - the setpoint for the robot to move to
-   * @return - true or false depending on where the robot is
-   */
-  public boolean onTarget(double inches)
-  {
-    double moveAverage = (m_leftEncoder.getPosition() + m_rightEncoder.getPosition())/2;
-    double deadband = 0.25;
-    if(moveAverage >= Constants.inchesToRev(inches - deadband) && moveAverage <= Constants.inchesToRev(inches + deadband))
-    {
-      return true;
-    }
-    return false;
-  }
 
-
-  public void updateSmartDashboard()
-  {
-    SmartDashboard.putNumber("Speed", m_rightEncoder.getVelocity());
-    SmartDashboard.putNumber("Left Encoder", m_leftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder", m_leftEncoder.getPosition());
-  }
 
 
   /**
@@ -199,16 +136,10 @@ public class Drivetrain extends Subsystem {
    */
   private void set(double leftPower, double rightPower, ControlType type)
   {
-    m_leftPID.setReference(leftPower, type);
-    m_rightPID.setReference(rightPower,type);
-
-    //System.out.println(leftPower);
+    m_leftMaster.set(ControlMode.PercentOutput,leftPower);
+    m_rightMaster.set(ControlMode.PercentOutput,rightPower); 
   }
 
-  public void run()
-  {
-    m_leftMaster.set(1);
-  }
 
 
 

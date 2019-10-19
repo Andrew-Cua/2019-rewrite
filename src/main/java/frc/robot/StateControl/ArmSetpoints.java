@@ -11,11 +11,11 @@ public enum ArmSetpoints
      * (cargoTick, hatchTick)
      */
     kNeutral(0,0),
-    kBallGetter(38000,380000),
-    kCargoShip(218000,0),
-    kLowGoal(106000,100000),
-    kMidGoal(273000, 163500),
-    kHighGoal(425000, 301453);
+    kBallGetter(0,0),
+    kCargoShip(218000/2,0),
+    kLowGoal(106000/2,100000/2), //hello gamers
+    kMidGoal(273000/2, 163500/2), //today we are going to learn how to hello
+    kHighGoal(215000, 0);
 
     private int cargoSetpoint;
     private int hatchSetpoint;

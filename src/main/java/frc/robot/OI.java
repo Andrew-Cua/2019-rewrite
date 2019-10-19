@@ -87,7 +87,7 @@ public class OI {
     buttonFive.whenPressed(new SetCargoState(ArmSetpoints.kHighGoal));
     buttonSix.whenPressed(new SetCargoState(ArmSetpoints.kMidGoal));
     buttonSeven.whenActive(new SetCargoState(ArmSetpoints.kLowGoal));
-    buttonEight.whenPressed(new ToggleUserControl());
+    //buttonEight.whenPressed(new ToggleUserControl());
     buttonNine.whenPressed(new SetCargoState(ArmSetpoints.kNeutral));
     //buttonTen.whenPressed(new SetCargoState(ArmSetpoints.kHighGoal));
     //buttonEleven.whenPressed(new SetCargoState(ArmSetpoints.kNeutral));
@@ -96,7 +96,7 @@ public class OI {
     //buttonFifteen.whenPressed(new ToggleVacuumCommand());
 
     x_buttonTwo.whenPressed(new SeekBallCommand());
-    x_buttonThree.whileHeld(new SeekTapeCommand());
+    //x_buttonThree.whileHeld(new SeekTapeCommand());
     //x_buttonFour.whenPressed(new AutoGoal());
     x_buttonOne.whenPressed(new ActuateIntakeCommand());
   }

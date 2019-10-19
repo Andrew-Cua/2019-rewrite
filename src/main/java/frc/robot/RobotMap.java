@@ -15,12 +15,12 @@ package frc.robot;
  */
 public class RobotMap {
 
-  public static int leftMaster = 10,
-                    leftSlaveA = 11,
+  public static int leftMaster = 11,
+                    leftSlaveA = 14,
                     leftSlaveB = 14;
 
-  public static int rightMaster = 12,
-                    rightSlaveA = 13,
+  public static int rightMaster = 13,
+                    rightSlaveA = 15,
                     rightSlaveB = 15;
 
   public static int armMaster = 10,

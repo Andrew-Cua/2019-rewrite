@@ -7,12 +7,12 @@
 
 package frc.robot.commands.Drivetrain;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.utilities.Vision.PipelineMode;
 
-public class SeekTapeCommand extends Command {
-  public SeekTapeCommand() {
+public class CurvatureDrive extends Command {
+  public CurvatureDrive() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.m_drivetrain);
@@ -21,13 +21,13 @@ public class SeekTapeCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    //Robot.m_limelight.setTrackTarget(PipelineMode.kGoal);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivetrain.seekTarget();
+    Robot.m_drivetrain.curvatureDrive(Robot.m_oi.getDriveController().getY(Hand.kLeft),
+                                       -Robot.m_oi.getDriveController().getX(Hand.kRight), Robot.m_oi.getDriveController().getBumper(Hand.kLeft));
   }
 
   // Make this return true when this Command no longer needs to run execute()

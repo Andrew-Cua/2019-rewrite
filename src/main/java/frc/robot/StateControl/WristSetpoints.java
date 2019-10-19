@@ -9,9 +9,9 @@ public enum WristSetpoints
      * (cargo,hatch)
      */
     kNeutral(0,0),
-    kBallGetter(6300,6300),
+    kBallGetter(0,0),
     kCargoShip(5900,0),
-    kLow(3925,1925),
+    kLow(0,0),
     kMid(4000, 1923),
     kHigh(4000,1609);
 

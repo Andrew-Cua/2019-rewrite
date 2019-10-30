@@ -74,7 +74,7 @@ public class Wrist extends Subsystem
     highGoalState  = new HighGoalState(this);
     neutralState   = new NeutralState(this);
     ballGetterState= new BallGetterState(this);
-    state = ballGetterState;
+    state = neutralState;
 
   }
 

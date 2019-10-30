@@ -9,6 +9,7 @@ package frc.robot.commands.Drivetrain;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class CurvatureDrive extends Command {
@@ -26,8 +27,13 @@ public class CurvatureDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if(Constants.applyDeadband(Robot.m_oi.getDriveController().getY(Hand.kLeft), 0.12) >= 0.12 ) {
     Robot.m_drivetrain.curvatureDrive(Robot.m_oi.getDriveController().getY(Hand.kLeft),
-                                       -Robot.m_oi.getDriveController().getX(Hand.kRight), Robot.m_oi.getDriveController().getBumper(Hand.kLeft));
+                                       -Robot.m_oi.getDriveController().getX(Hand.kRight), false);
+    } else {
+      Robot.m_drivetrain.curvatureDrive(Robot.m_oi.getDriveController().getY(Hand.kLeft),
+                                       -Robot.m_oi.getDriveController().getX(Hand.kRight), true);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -95,6 +95,8 @@ public class Drivetrain extends Subsystem {
     double angularPow =0;
     ySpeed = Constants.applyDeadband(ySpeed, 0.12);
     x = Constants.applyDeadband(x, Constants.kDriveDeadband);
+    ySpeed = (ySpeed/Math.abs(ySpeed+0.00001))*Math.sin(Math.PI/2 * Math.pow(ySpeed, 2));
+    x = (x/Math.abs(x+0.00001))*Math.sin(Math.PI/2 * Math.pow(x, 2));
     System.out.println(ySpeed);
     if(isQuickturn)
     {
@@ -103,7 +105,7 @@ public class Drivetrain extends Subsystem {
         mQuickStopAccum = (1 - Constants.kQuickStopAlpha)*mQuickStopAccum + Constants.kQuickStopAlpha * Constants.clamp(x, -1.0, 1.0)*2;
        }
        overPower = true;
-       angularPow = x;
+       angularPow = x*0.33;
     }else
     {
       overPower = false;

@@ -241,6 +241,7 @@ public class Wrist extends Subsystem
     state.updateSmartDashboard();
     SmartDashboard.putNumber("WristPos", m_wristMotor.getSelectedSensorPosition());
     SmartDashboard.putBoolean("User Controlled", ((m_control == WristControlType.kTeleop)? true: false));
+    System.out.println(m_wristMotor.getSelectedSensorPosition());
     
   }
 

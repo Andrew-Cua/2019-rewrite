@@ -96,8 +96,8 @@ public class OI {
     //buttonFifteen.whenPressed(new ToggleVacuumCommand());
 
     x_buttonTwo.whenPressed(new SeekBallCommand());
-    //x_buttonThree.whileHeld(new SeekTapeCommand());
-    //x_buttonFour.whenPressed(new AutoGoal());
+    x_buttonThree.whileHeld(new SeekTapeCommand());
+    x_buttonFour.whenPressed(new AutoGoal());
     x_buttonOne.whenPressed(new ActuateIntakeCommand());
   }
 

@@ -21,13 +21,14 @@ public class SeekTapeCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    //Robot.m_limelight.setTrackTarget(PipelineMode.kGoal);
+    Robot.m_limelight.setTrackTarget(PipelineMode.kGoal);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivetrain.seekTarget();
+    //Robot.m_drivetrain.seekTarget();
+    Robot.m_drivetrain.autoScore();
   }
 
   // Make this return true when this Command no longer needs to run execute()

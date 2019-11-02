@@ -113,6 +113,8 @@ public class Vision
     public double getY()
     {return m_y;}
 
+    public double getA()
+    {return m_area;}
 
     
 

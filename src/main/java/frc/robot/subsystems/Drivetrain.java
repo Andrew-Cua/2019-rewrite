@@ -23,6 +23,7 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.Drivetrain.CurvatureDrive;
 import frc.robot.commands.Drivetrain.DefaultDriveCommand;
+import frc.robot.utilities.Vision.PipelineMode;
 
 /**
  * Add your docs here.
@@ -35,6 +36,8 @@ public class Drivetrain extends Subsystem {
   private CANSparkMax mLeftMaster;
   private CANSparkMax mLeftSlave;
 
+  double leftPower;
+  double rightPower;
 
   private CANSparkMax mRightMaster;
   private CANSparkMax mRightSlave;
@@ -95,7 +98,7 @@ public class Drivetrain extends Subsystem {
     double angularPow =0;
     ySpeed = Constants.applyDeadband(ySpeed, 0.12);
     x = Constants.applyDeadband(x, Constants.kDriveDeadband);
-    System.out.println(ySpeed);
+    //System.out.println(ySpeed);
     if(isQuickturn)
     {
        if(Math.abs(ySpeed) < 0.2)
@@ -108,7 +111,7 @@ public class Drivetrain extends Subsystem {
     {
       overPower = false;
       angularPow = Math.abs(ySpeed) * x - mQuickStopAccum;
-      System.out.println("APow:"+mQuickStopAccum);
+      //System.out.println("APow:"+mQuickStopAccum);
 
       if(mQuickStopAccum > 1)
       {
@@ -161,6 +164,43 @@ public class Drivetrain extends Subsystem {
     double rightDistance = Constants.inchesToRev(inches); 
     
     set(leftDistance, rightDistance, ControlType.kPosition);
+  }
+
+  public void autoScore()
+  {
+    double a = Robot.m_limelight.getA();
+    double x = Robot.m_limelight.getX();
+    double y = Robot.m_limelight.getY();
+    double v = Robot.m_limelight.getV();
+    
+    
+    Robot.m_limelight.setTrackTarget(PipelineMode.kGoal);
+    System.out.println(a);
+    if(v == 0)
+    {
+      return;
+    }
+    if (v !=0 && x > -5 && x < 5){
+      leftPower = .5/2/2;
+      rightPower = .5/2/2;
+    }
+    else if (v == 1 && x>5){
+      leftPower = -.25/2/2;
+      rightPower = .25/2/2;
+    } else if (v == 1 && x<-5){
+      leftPower = .25/2/2;
+      rightPower = -.25/2/2;
+    } else if (a > 5){
+      leftPower = .25/2/2;
+      rightPower = .25/2/2;
+    }else if (a < 1 ){
+      leftPower = -.25/2/2;
+      rightPower = -.25/2/2;
+    }else if (a < 5 && a > 1){
+      return;
+    }
+    
+    set(leftPower, rightPower, null);
   }
   //haha epic comment
 

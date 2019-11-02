@@ -98,7 +98,9 @@ public class Drivetrain extends Subsystem {
     double angularPow =0;
     ySpeed = Constants.applyDeadband(ySpeed, 0.12);
     x = Constants.applyDeadband(x, Constants.kDriveDeadband);
-    //System.out.println(ySpeed);
+    ySpeed = (ySpeed/Math.abs(ySpeed+0.00001))*Math.sin(Math.PI/2 * Math.pow(ySpeed, 2));
+    x = (x/Math.abs(x+0.00001))*Math.sin(Math.PI/2 * Math.pow(x, 2));
+    System.out.println(ySpeed);
     if(isQuickturn)
     {
        if(Math.abs(ySpeed) < 0.2)
@@ -127,8 +129,8 @@ public class Drivetrain extends Subsystem {
       
     }
 
-    double leftPow = -(ySpeed*0.33) + angularPow;
-    double rightPow = -(ySpeed*0.33) - angularPow;
+    double leftPow = -(ySpeed) + angularPow;
+    double rightPow = -(ySpeed) - angularPow;
 
     if (overPower) {
       if (leftPow > 1.0) {

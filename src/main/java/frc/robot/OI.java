@@ -87,7 +87,7 @@ public class OI {
     buttonFive.whenPressed(new SetCargoState(ArmSetpoints.kHighGoal));
     buttonSix.whenPressed(new SetCargoState(ArmSetpoints.kMidGoal));
     buttonSeven.whenActive(new SetCargoState(ArmSetpoints.kLowGoal));
-    //buttonEight.whenPressed(new ToggleUserControl());
+    buttonEight.whenPressed(new ToggleUserControl());
     buttonNine.whenPressed(new SetCargoState(ArmSetpoints.kNeutral));
     //buttonTen.whenPressed(new SetCargoState(ArmSetpoints.kHighGoal));
     //buttonEleven.whenPressed(new SetCargoState(ArmSetpoints.kNeutral));

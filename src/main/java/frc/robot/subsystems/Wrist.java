@@ -74,7 +74,7 @@ public class Wrist extends Subsystem
     highGoalState  = new HighGoalState(this);
     neutralState   = new NeutralState(this);
     ballGetterState= new BallGetterState(this);
-    state = ballGetterState;
+    state = neutralState;
 
   }
 
@@ -241,6 +241,7 @@ public class Wrist extends Subsystem
     state.updateSmartDashboard();
     SmartDashboard.putNumber("WristPos", m_wristMotor.getSelectedSensorPosition());
     SmartDashboard.putBoolean("User Controlled", ((m_control == WristControlType.kTeleop)? true: false));
+    System.out.println(m_wristMotor.getSelectedSensorPosition());
     
   }
 

@@ -60,7 +60,7 @@ public class Arm extends Subsystem {
     cargoShipState = new CargoShipState(this);
     neutralState   = new NeutralState(this);
     ballGetterState = new BallGetterState(this);
-    setState(ArmSetpoints.kNeutral);
+    setState(ArmSetpoints.kBallGetter);
 
     //initialize arm motors
     m_master = new TalonSRX(RobotMap.armMaster);
@@ -197,6 +197,7 @@ public class Arm extends Subsystem {
   {
     state.updateSmartDashboard();
     SmartDashboard.putNumber(("Arm pos"), m_master.getSelectedSensorPosition());
+    System.out.println("Arm" + m_master.getSelectedSensorPosition());
   }
 
   /**

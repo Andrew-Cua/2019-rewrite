@@ -59,6 +59,21 @@ public class Drivetrain extends Subsystem {
     //set slaves to follow masters
     mRightSlave.follow(mRightMaster);
     mLeftSlave.follow(mLeftMaster);
+    
+
+    mRightMaster.setSmartCurrentLimit(38);
+    mLeftMaster.setSmartCurrentLimit(38);
+    mRightSlave.setSmartCurrentLimit(38);
+    mLeftSlave.setSmartCurrentLimit(38);
+
+    mRightMaster.enableVoltageCompensation(12);
+    mLeftMaster.enableVoltageCompensation(12);
+    mRightSlave.enableVoltageCompensation(12);
+    mLeftSlave.enableVoltageCompensation(12);
+
+
+    mRightMaster.setOpenLoopRampRate(0.75);
+    mLeftMaster.setOpenLoopRampRate(0.75);
     }
 
   /**

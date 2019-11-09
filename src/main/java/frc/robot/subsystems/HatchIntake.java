@@ -33,7 +33,7 @@ public class HatchIntake extends Subsystem
 
   private HatchIntake()
   {
-    m_intakePiston = new DoubleSolenoid(6, 1);
+    m_intakePiston = new DoubleSolenoid(7, 1);
     m_vacuumMotor  = new VictorSPX(14);
   }
 

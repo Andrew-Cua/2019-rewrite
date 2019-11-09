@@ -80,6 +80,15 @@ public class Arm extends Subsystem {
     m_master.config_kP(0, Constants.arm_KP);
     m_master.config_kD(0, Constants.arm_KD);
 
+    m_master.configVoltageCompSaturation(12, 100);
+    m_slave.configVoltageCompSaturation(12, 100);
+    m_master.configContinuousCurrentLimit(40);
+    m_slave.configContinuousCurrentLimit(40);
+    m_master.configPeakCurrentLimit(38);
+    m_slave.configPeakCurrentLimit(38);
+    m_master.enableVoltageCompensation(true);
+    m_slave.enableVoltageCompensation(true);
+
   }
 
 

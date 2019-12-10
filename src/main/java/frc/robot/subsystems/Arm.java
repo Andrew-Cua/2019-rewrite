@@ -74,8 +74,8 @@ public class Arm extends Subsystem {
     //config arm PID
     m_master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     m_master.setSensorPhase(false);
-    m_master.configMotionCruiseVelocity(30000);
-    m_master.configMotionAcceleration(40000);
+    m_master.configMotionCruiseVelocity(30000/2);
+    m_master.configMotionAcceleration(20000/2);
     m_master.config_kF(0, Constants.arm_KF);
     m_master.config_kP(0, Constants.arm_KP);
     m_master.config_kD(0, Constants.arm_KD);

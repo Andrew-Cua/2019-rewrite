@@ -60,7 +60,7 @@ public class Arm extends Subsystem {
     cargoShipState = new CargoShipState(this);
     neutralState   = new NeutralState(this);
     ballGetterState = new BallGetterState(this);
-    setState(ArmSetpoints.kNeutral);
+    setState(ArmSetpoints.kBallGetter);
 
     //initialize arm motors
     m_master = new TalonSRX(RobotMap.armMaster);
@@ -79,6 +79,15 @@ public class Arm extends Subsystem {
     m_master.config_kF(0, Constants.arm_KF);
     m_master.config_kP(0, Constants.arm_KP);
     m_master.config_kD(0, Constants.arm_KD);
+
+    m_master.configVoltageCompSaturation(12, 100);
+    m_slave.configVoltageCompSaturation(12, 100);
+    m_master.configContinuousCurrentLimit(40);
+    m_slave.configContinuousCurrentLimit(40);
+    m_master.configPeakCurrentLimit(38);
+    m_slave.configPeakCurrentLimit(38);
+    m_master.enableVoltageCompensation(true);
+    m_slave.enableVoltageCompensation(true);
 
   }
 
@@ -196,13 +205,19 @@ public class Arm extends Subsystem {
   public void updateSmartDashboard()
   {
     state.updateSmartDashboard();
-    SmartDashboard.putNumber(("Arm Pss"), m_master.getSelectedSensorPosition());
+    SmartDashboard.putNumber(("Arm pos"), m_master.getSelectedSensorPosition());
+    System.out.println("Arm" + m_master.getSelectedSensorPosition());
   }
 
-  public void manual(double y)
+  /**
+   * function to raise the arm to a given height
+   * @param height of person in inches
+   */
+  public void raiseToHeight(double height)
   {
-    m_master.set(ControlMode.PercentOutput, y*0.25);
+    
   }
+
 
 
   /**

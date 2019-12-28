@@ -21,42 +21,60 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.Drivetrain.CurvatureDrive;
 import frc.robot.commands.Drivetrain.DefaultDriveCommand;
+import frc.robot.utilities.Vision.PipelineMode;
 
 /**
  * Add your docs here.
  */
 public class Drivetrain extends Subsystem {
   public static Drivetrain m_drivetrain = new Drivetrain();
+  private double mQuickStopAccum = 0D;
 
 
-  private VictorSPX m_leftMaster;
-  private VictorSPX m_leftSlave;
+  private CANSparkMax mLeftMaster;
+  private CANSparkMax mLeftSlave;
 
+  double leftPower;
+  double rightPower;
 
-  private VictorSPX m_rightMaster;
-  private VictorSPX m_rightSlave;
+  private CANSparkMax mRightMaster;
+  private CANSparkMax mRightSlave;
 
   private Drivetrain()
   {
     //initialize left motors
-    m_leftMaster = new VictorSPX(RobotMap.leftMaster);
-    m_leftSlave  = new VictorSPX(RobotMap.leftSlaveA);
+    mLeftMaster = new CANSparkMax(RobotMap.leftMaster,MotorType.kBrushless);
+    mLeftSlave  = new CANSparkMax(RobotMap.leftSlaveA,MotorType.kBrushless);
 
-
-    m_rightMaster = new VictorSPX(RobotMap.rightMaster);
-    m_rightSlave  = new VictorSPX(RobotMap.rightSlaveA);
-
-
+    //init right motors
+    mRightMaster = new CANSparkMax(RobotMap.rightMaster,MotorType.kBrushless);
+    mRightSlave  = new CANSparkMax(RobotMap.rightSlaveA,MotorType.kBrushless);
     //invert rightside motors so that it can drive straight
-    m_rightMaster.setInverted(InvertType.InvertMotorOutput);
-    m_rightSlave.setInverted(InvertType.InvertMotorOutput);
-    m_leftSlave.follow(m_leftMaster);
+    mRightMaster.setInverted(true);
+    mRightSlave.setInverted(true);
+    
 
     //set slaves to follow masters
-    m_rightSlave.follow(m_rightMaster);
+    mRightSlave.follow(mRightMaster);
+    mLeftSlave.follow(mLeftMaster);
+    
 
-      }
+    mRightMaster.setSmartCurrentLimit(38);
+    mLeftMaster.setSmartCurrentLimit(38);
+    mRightSlave.setSmartCurrentLimit(38);
+    mLeftSlave.setSmartCurrentLimit(38);
+
+    mRightMaster.enableVoltageCompensation(12);
+    mLeftMaster.enableVoltageCompensation(12);
+    mRightSlave.enableVoltageCompensation(12);
+    mLeftSlave.enableVoltageCompensation(12);
+
+
+    mRightMaster.setOpenLoopRampRate(0.75);
+    mLeftMaster.setOpenLoopRampRate(0.75);
+    }
 
   /**
    * common function to drive the robot
@@ -73,12 +91,82 @@ public class Drivetrain extends Subsystem {
 
     double yValPrime = Math.pow((sensFactor*y), 5) + ((1-sensFactor)*y);
     double xValPrime = Math.pow((sensFactor*x), 5) + ((1-sensFactor)*x);
-    double leftPower  =  yValPrime - xValPrime;
-    double rightPower =  yValPrime + xValPrime;
+    double leftPower  =  -yValPrime - xValPrime;
+    double rightPower =  -yValPrime + xValPrime;
 
     double leftVelocity  = (y - x);// * Constants.kMAX_VEL;
     double rightVelocity = (y + x);// * Constants.kMAX_VEL;
     set(leftPower, rightPower, ControlType.kDutyCycle);
+  }
+
+  /**
+   * interface to drive the robot
+   * better control at higher speeds since the robot 
+   * travels a similar arc no matter speed
+   * @param ySpeed the y value of the control axis
+   * @param x the x value of the control axis
+   * @param isQuickturn whether to do a 0 point turn
+   */
+  public void curvatureDrive(double ySpeed, double x, boolean isQuickturn)
+  {
+    boolean overPower = false;
+    double angularPow =0;
+    ySpeed = Constants.applyDeadband(ySpeed, 0.12);
+    x = Constants.applyDeadband(x, Constants.kDriveDeadband);
+    ySpeed = (ySpeed/Math.abs(ySpeed+0.00001))*Math.sin(Math.PI/2 * Math.pow(ySpeed, 2));
+    x = (x/Math.abs(x+0.00001))*Math.sin(Math.PI/2 * Math.pow(x, 2));
+    System.out.println(ySpeed);
+    if(isQuickturn)
+    {
+       if(Math.abs(ySpeed) < 0.2)
+       {
+        mQuickStopAccum = (1 - Constants.kQuickStopAlpha)*mQuickStopAccum + Constants.kQuickStopAlpha * Constants.clamp(x, -1.0, 1.0)*2;
+       }
+       overPower = true;
+       angularPow = x;
+    }else
+    {
+      overPower = false;
+      angularPow = Math.abs(ySpeed) * x - mQuickStopAccum;
+      //System.out.println("APow:"+mQuickStopAccum);
+
+      if(mQuickStopAccum > 1)
+      {
+        mQuickStopAccum -= 1;
+      }else if(mQuickStopAccum < -1)
+      {
+        mQuickStopAccum += 1;
+      }else
+      {
+        mQuickStopAccum = 0.0;
+      }
+
+      
+    }
+
+    double leftPow = -(ySpeed) + angularPow;
+    double rightPow = -(ySpeed) - angularPow;
+
+    if (overPower) {
+      if (leftPow > 1.0) {
+        rightPow -= leftPow - 1.0;
+        leftPow = 1.0;
+      } else if (rightPow > 1.0) {
+        leftPow -= rightPow - 1.0;
+        rightPow = 1.0;
+      } else if (leftPow < -1.0) {
+        rightPow -= leftPow + 1.0;
+        leftPow = -1.0;
+      } else if (rightPow < -1.0) {
+        leftPow -= rightPow + 1.0;
+        rightPow = -1.0;
+      }
+
+
+    //System.out.println("L:"+ leftPow);
+  }
+
+  set(leftPow, rightPow, null);
   }
 
   /**
@@ -93,6 +181,43 @@ public class Drivetrain extends Subsystem {
     double rightDistance = Constants.inchesToRev(inches); 
     
     set(leftDistance, rightDistance, ControlType.kPosition);
+  }
+
+  public void autoScore()
+  {
+    double a = Robot.m_limelight.getA();
+    double x = Robot.m_limelight.getX();
+    double y = Robot.m_limelight.getY();
+    double v = Robot.m_limelight.getV();
+    
+    
+    Robot.m_limelight.setTrackTarget(PipelineMode.kGoal);
+    System.out.println(a);
+    if(v == 0)
+    {
+      return;
+    }
+    if (v !=0 && x > -5 && x < 5){
+      leftPower = .5/2/2;
+      rightPower = .5/2/2;
+    }
+    else if (v == 1 && x>5){
+      leftPower = -.25/2/2;
+      rightPower = .25/2/2;
+    } else if (v == 1 && x<-5){
+      leftPower = .25/2/2;
+      rightPower = -.25/2/2;
+    } else if (a > 5){
+      leftPower = .25/2/2;
+      rightPower = .25/2/2;
+    }else if (a < 1 ){
+      leftPower = -.25/2/2;
+      rightPower = -.25/2/2;
+    }else if (a < 5 && a > 1){
+      return;
+    }
+    
+    set(leftPower, rightPower, null);
   }
   //haha epic comment
 
@@ -136,8 +261,8 @@ public class Drivetrain extends Subsystem {
    */
   private void set(double leftPower, double rightPower, ControlType type)
   {
-    m_leftMaster.set(ControlMode.PercentOutput,leftPower);
-    m_rightMaster.set(ControlMode.PercentOutput,rightPower); 
+    mLeftMaster.set(leftPower);
+    mRightMaster.set(rightPower); 
   }
 
 
@@ -151,6 +276,6 @@ public class Drivetrain extends Subsystem {
   }
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new DefaultDriveCommand());
+    setDefaultCommand(new CurvatureDrive());
   }
 }

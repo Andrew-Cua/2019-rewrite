@@ -78,6 +78,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     m_limelight.updateVision();
     //m_drivetrain.updateSmartDashboard();
+    SmartDashboard.putNumber("area", m_limelight.getA());
     m_climber.updateSmartDashboard();
     m_wrist.updateSmartDashboard();
     m_arm.updateSmartDashboard();

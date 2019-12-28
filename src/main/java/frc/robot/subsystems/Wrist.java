@@ -59,8 +59,8 @@ public class Wrist extends Subsystem
 
     //configure motion magic
     m_wristMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-    m_wristMotor.configMotionCruiseVelocity(1000);
-    m_wristMotor.configMotionAcceleration(830);
+    m_wristMotor.configMotionCruiseVelocity(2000);
+    m_wristMotor.configMotionAcceleration(1500);
     m_wristMotor.setSensorPhase(true);
     //config PID
     m_wristMotor.config_kF(0,1.1443);
@@ -241,6 +241,7 @@ public class Wrist extends Subsystem
     state.updateSmartDashboard();
     SmartDashboard.putNumber("WristPos", m_wristMotor.getSelectedSensorPosition());
     SmartDashboard.putBoolean("User Controlled", ((m_control == WristControlType.kTeleop)? true: false));
+    System.out.println(m_wristMotor.getSelectedSensorPosition());
     
   }
 

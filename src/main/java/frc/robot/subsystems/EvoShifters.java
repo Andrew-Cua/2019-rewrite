@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,11 +21,13 @@ public class EvoShifters extends Subsystem {
   // here. Call these from Commands.
   private static EvoShifters m_shifters = new EvoShifters();
 
-  private DoubleSolenoid m_shifter;
+  private Solenoid m_shifterOut;
+  private Solenoid m_shifterIn;
   private boolean isLowGear = false;
   private EvoShifters()
   {
-    m_shifter = new DoubleSolenoid(7, 3);
+    m_shifterOut = new Solenoid(6);
+    m_shifterIn = new Solenoid(3);
   }
 
 
@@ -53,7 +56,8 @@ public class EvoShifters extends Subsystem {
    */
   private void highGear()
   {
-    m_shifter.set(Value.kForward);
+    m_shifterOut.set(false);
+    m_shifterIn.set(true);
   }
 
   /**
@@ -61,7 +65,8 @@ public class EvoShifters extends Subsystem {
    */
   private void lowGear()
   {
-    m_shifter.set(Value.kReverse);
+    m_shifterOut.set(true);
+    m_shifterIn.set(false);
   }
 
 

@@ -18,6 +18,9 @@ public class Constants
     public static final double kWHEEL_CIRCUMFERENCE = Math.PI*(2*kWHEEL_RADIUS);
     public static final double kINCHES_PER_REV = kWHEEL_CIRCUMFERENCE/kHIGH_GEAR_RATIO;
 
+    public static final double kQuickStopAlpha = 0.1;
+    public static final double kDriveDeadband = 0.02;
+
     /**
      * turns inches into the amount of revs required by the motor
      * @param inches - distance to travel
@@ -37,6 +40,25 @@ public class Constants
     {
         return kINCHES_PER_REV*rev;
     }
+
+    public static double heightToTicks(double height)
+    {
+        
+        return height;
+    }
+
+    public static double applyDeadband(double x, double deadBand)
+    {
+        if(Math.abs(x) < deadBand)
+        {
+            return 0;
+        }
+        return x;
+    }
+
+    public static double clamp(double value, double low, double high) {
+        return Math.max(low, Math.min(value, high));
+      }
 
     //drivetrain PID constants
     public static final double kP = 1;

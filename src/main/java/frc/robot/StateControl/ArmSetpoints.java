@@ -17,6 +17,7 @@ public enum ArmSetpoints
     kMidGoal(273000/2, 163500/2), //today we are going to learn how to hello
     kHighGoal(215000, 0);
 
+
     private int cargoSetpoint;
     private int hatchSetpoint;
     private ArmSetpoints(int cargoSetpoint, int hatchSetpoint)
